@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "258023275628",
+    "project_id": "cryptchat-8cb8a",
+    "storage_bucket": "cryptchat-8cb8a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258023275628:android:7d57ef4db22bb0b2c7ac49",
+        "android_client_info": {
+          "package_name": "com.example.crypt_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258023275628-mo7225ocgep7rhhgl7o3h2ebuetvbilm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEnnUg85X-SRvRDralklnw52m9DYqr8KQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "258023275628-mo7225ocgep7rhhgl7o3h2ebuetvbilm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
