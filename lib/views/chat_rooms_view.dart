@@ -1,11 +1,28 @@
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
+import 'package:crypt_chat/constants/app_constants.dart';
+import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/views/search_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ChatRooms extends StatelessWidget {
+class ChatRooms extends StatefulWidget {
+  @override
+  _ChatRoomsState createState() => _ChatRoomsState();
+}
+
+class _ChatRoomsState extends State<ChatRooms> {
   AuthMethods authMethods = new AuthMethods();
+  SharedPrefHelper sharedPrefHelper = new SharedPrefHelper();
+  @override
+  void initState() {
+    getCurrUser();
+    super.initState();
+  }
+
+  void getCurrUser() async {
+    Constants.currentUser=await sharedPrefHelper.getUsernameSharedPref();
+  }
 
   @override
   Widget build(BuildContext context) {

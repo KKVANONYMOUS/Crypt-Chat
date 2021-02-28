@@ -14,7 +14,7 @@ class DatabaseMethods{
     FirebaseFirestore.instance.collection('users').add(userInfoMap);
   }
 
-  createChatRoom(String ChatRoomID,Map <String,String> ChatRoomMap){
-    FirebaseFirestore.instance.collection(ChatRoomID).add(ChatRoomMap);
+  createChatRoom(String ChatRoomID,Map <String,dynamic> ChatRoomMap){
+    FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).set(ChatRoomMap);
   }
 }

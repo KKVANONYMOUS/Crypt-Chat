@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypt_chat/constants/app_constants.dart';
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
+import 'package:crypt_chat/views/chat_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -23,15 +25,59 @@ class _SearchScreenState extends State<SearchScreen> {
       itemCount: searchUserSnapshot.docs.length,
       itemBuilder: (context,index){
         return SearchListItem(
-          username: searchUserSnapshot.docs[index].data()["username"],
-          email: searchUserSnapshot.docs[index].data()["email"],
+          searchUserSnapshot.docs[index].data()["username"],
+          searchUserSnapshot.docs[index].data()["email"],
         );
       }) : Container();
   }
 
   createChatRoom(String username){
-    // List <String> users=[username,]
-    // databaseMethods.createChatRoom(ChatRoomID, ChatRoomMap)
+    List <String> users=[username,Constants.currentUser];
+    String chatRoomID=getChatRoomId(username, Constants.currentUser);
+    Map <String,dynamic> ChatRoomMap = {
+      'chatRoomID':chatRoomID,
+      'users':users
+    };
+    databaseMethods.createChatRoom(chatRoomID, ChatRoomMap);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen()));
+  }
+
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
+  }
+
+  Widget SearchListItem (String username,String email){
+    Size screenSize=MediaQuery.of(context).size;
+    return username != Constants.currentUser ? GestureDetector(
+      onTap: (){
+        createChatRoom(username);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment:CrossAxisAlignment.start,
+              children: [
+                Text(
+                  username,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor
+                  ),
+                ),
+                Text(email)
+              ],
+            ),
+            Spacer()
+          ],
+        ),
+      ),
+    ) : Container();
   }
 
   @override
@@ -121,41 +167,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-
-class SearchListItem extends StatelessWidget {
-  final String username;
-  final String email;
-  SearchListItem({this.username,this.email});
-
-  @override
-  Widget build(BuildContext context) {
-    Size screenSize=MediaQuery.of(context).size;
-    return GestureDetector(
-      onTap: (){},
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment:CrossAxisAlignment.start,
-              children: [
-                Text(
-                  username,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor
-                  ),
-                ),
-                Text(email)
-              ],
-            ),
-            Spacer()
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 
 

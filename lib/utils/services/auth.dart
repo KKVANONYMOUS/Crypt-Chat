@@ -1,4 +1,5 @@
 import 'package:crypt_chat/model/user.dart';
+import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthMethods{
@@ -43,6 +44,7 @@ class AuthMethods{
 
   Future signOut() async {
     try{
+      SharedPrefHelper().saveUserLoggedInSharedPref(false);
       return await _auth.signOut();
     }
     catch(e){
