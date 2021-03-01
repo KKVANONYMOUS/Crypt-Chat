@@ -33,10 +33,10 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenSize.height * 0.04),
                   RoundedButton(screenSize: screenSize,text:'LOGIN', color: Theme.of(context).primaryColor,textColor:Colors.white,press: () {
-                   Navigator.push(context,MaterialPageRoute(builder: (context){return LoginScreen();}));
+                   Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){return LoginScreen();}));
                   }),
                   RoundedButton(screenSize: screenSize,text:'SIGN UP', color: Color(0xFFF1E6FF),textColor:Colors.black,press: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context){return SignUpScreen();}));
+                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){return SignUpScreen();}));
                   }),
                 ],
               ),

@@ -111,13 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       body:Container(
         margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
-        decoration: BoxDecoration(
-            color:Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0)
-            )
-        ),
+        color: Colors.white,
         child: Column(
           children: [
             Container(
