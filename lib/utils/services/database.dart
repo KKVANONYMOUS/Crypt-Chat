@@ -17,4 +17,11 @@ class DatabaseMethods{
   createChatRoom(String ChatRoomID,Map <String,dynamic> ChatRoomMap){
     FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).set(ChatRoomMap);
   }
+
+  addChatMessage(String ChatRoomID,Map <String,dynamic> ChatMessageMap){
+    FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').add(ChatMessageMap);
+  }
+  getChatMessage(String ChatRoomID) async {
+    return await FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').orderBy("time",descending: false).snapshots();
+  }
 }

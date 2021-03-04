@@ -39,7 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'users':users
     };
     databaseMethods.createChatRoom(chatRoomID, ChatRoomMap);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(chatRoomID)));
   }
 
   getChatRoomId(String a, String b) {
