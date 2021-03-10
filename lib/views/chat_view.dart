@@ -161,7 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/7.jpg"),
+              backgroundImage: AssetImage("assets/images/user_avatar.png"),
               maxRadius: 20,
             ),
             SizedBox(width: 12,),

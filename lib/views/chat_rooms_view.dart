@@ -1,6 +1,8 @@
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
+import 'package:crypt_chat/utils/services/database.dart';
+import 'package:crypt_chat/views/chat_view.dart';
 import 'package:crypt_chat/views/search_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,14 +16,81 @@ class ChatRooms extends StatefulWidget {
 class _ChatRoomsState extends State<ChatRooms> {
   AuthMethods authMethods = new AuthMethods();
   SharedPrefHelper sharedPrefHelper = new SharedPrefHelper();
+  DatabaseMethods databaseMethods= new DatabaseMethods();
+
+  Stream ChatRoomsStream;
+
+  Widget chatRoomsList(){
+
+    return StreamBuilder(
+        stream: ChatRoomsStream,
+        builder: (context,snapshot){
+          return snapshot.hasData ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data.docs.length,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context,index){
+                return ChatRoomsItem(
+                    snapshot.data.docs[index].data()["chatRoomID"],
+                );
+              }
+          ) : Container();
+        }
+    );
+  }
+
+  Widget ChatRoomsItem(String ChatRoomID){
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(ChatRoomID)));
+      },
+      child: Container(
+        padding: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+        child: Row(
+          children:[
+            Expanded(
+              child: Row(
+                children:[
+                  CircleAvatar(
+                    backgroundImage: AssetImage("assets/images/user_avatar.png"),
+                    maxRadius: 30,
+                  ),
+                  SizedBox(width: 16,),
+                  Expanded(
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(ChatRoomID.replaceAll('_', "").replaceAll(Constants.currentUser, "").toUpperCase(), style: TextStyle(fontSize: 16))
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
-    getCurrUser();
+    getCurrUserandChats();
     super.initState();
   }
 
-  void getCurrUser() async {
+  void getCurrUserandChats() async {
     Constants.currentUser=await sharedPrefHelper.getUsernameSharedPref();
+    databaseMethods.getChatRooms(Constants.currentUser)
+        .then((val)=>{
+      setState((){
+        ChatRoomsStream = val;
+        print(Constants.currentUser);
+      })
+    });
   }
 
   @override
@@ -63,6 +132,11 @@ class _ChatRoomsState extends State<ChatRooms> {
         //     topRight: Radius.circular(30.0)
         //   )
         // ),
+        child: Column(
+          children: [
+            chatRoomsList(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
