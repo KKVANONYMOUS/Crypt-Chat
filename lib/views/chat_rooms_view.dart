@@ -88,7 +88,6 @@ class _ChatRoomsState extends State<ChatRooms> {
         .then((val)=>{
       setState((){
         ChatRoomsStream = val;
-        print(Constants.currentUser);
       })
     });
   }

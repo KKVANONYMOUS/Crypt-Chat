@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/services/database.dart';
+import 'package:crypt_chat/utils/services/encryption_decryption.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -30,8 +32,9 @@ class _ChatScreenState extends State<ChatScreen> {
           itemCount: snapshot.data.docs.length,
           physics: NeverScrollableScrollPhysics(),
           itemBuilder: (context,index){
+            String msg=snapshot.data.docs[index].data()["message"];
             return ChatMessageItem(
-              snapshot.data.docs[index].data()["message"],
+              EncryptionDecryption.decryptMessage(encrypt.Encrypted.fromBase64(msg)),
               Constants.currentUser == snapshot.data.docs[index].data()["sentBy"] ? true: false,
               snapshot.data.docs[index].data()["time"]
             );
@@ -128,8 +131,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   sendMessage(){
     if(textEditingController.text.isNotEmpty){
+      // Map <String,dynamic> ChatMessageMap = {
+      //   "message":textEditingController.text,
+      //   "sentBy": Constants.currentUser,
+      //   "time":DateTime.now().millisecondsSinceEpoch
+      // };
+
+      String encryptedMessage=EncryptionDecryption.encryptMessage(textEditingController.text);
       Map <String,dynamic> ChatMessageMap = {
-        "message":textEditingController.text,
+        "message":encryptedMessage,
         "sentBy": Constants.currentUser,
         "time":DateTime.now().millisecondsSinceEpoch
       };

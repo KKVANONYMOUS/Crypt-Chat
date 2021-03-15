@@ -10,6 +10,7 @@ class DatabaseMethods{
     return await FirebaseFirestore.instance.collection('users')
         .where('email',isEqualTo: email).get();
   }
+
   uploadUserInfo(Map<String,String > userInfoMap){
     FirebaseFirestore.instance.collection('users').add(userInfoMap);
   }
@@ -21,10 +22,13 @@ class DatabaseMethods{
   addChatMessage(String ChatRoomID,Map <String,dynamic> ChatMessageMap){
     FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').add(ChatMessageMap);
   }
+
   getChatMessage(String ChatRoomID) async {
     return await FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').orderBy("time",descending: false).snapshots();
   }
+  
   getChatRooms(String username) async {
     return await FirebaseFirestore.instance.collection('ChatRooms').where('users',arrayContains: username).snapshots();
   }
+
 }
