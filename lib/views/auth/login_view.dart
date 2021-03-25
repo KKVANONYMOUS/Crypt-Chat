@@ -74,16 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                      'LOGIN',
-                      style:TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor
-                      )
-                  ),
-                  SizedBox(height: screenSize.height * 0.03),
-                  SvgPicture.asset(
-                    "assets/images/login.svg",
+                  // Text(
+                  //     'LOGIN',
+                  //     style:TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Theme.of(context).primaryColor
+                  //     )
+                  // ),
+                  //SizedBox(height: screenSize.height * 0.03),
+                  Image.asset(
+                    "assets/images/login.png",
                     height: screenSize.height * 0.45,
                   ),
                   SizedBox(height: screenSize.height * 0.03),
@@ -96,23 +96,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  RoundedButton(screenSize: screenSize,text:'LOGIN', color: Theme.of(context).primaryColor,textColor:Colors.white,press: loginUser),
+                  RoundedButton(screenSize: screenSize,text:'Login', color: Theme.of(context).primaryColor,textColor:Colors.white,press: loginUser),
                   SizedBox(height: screenSize.height * 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don’t have an Account ?',
+                        'Don’t have an Account ? ',
                         style:TextStyle(
                           color:Theme.of(context).primaryColor
                         )
                       ),
                       GestureDetector(
                         onTap: (){
-                          Navigator.push(context,MaterialPageRoute(builder: (context){return SignUpScreen();}));
+                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){return SignUpScreen();}));
                         },
                         child: Text(
-                          'Sign Up',
+                          'Register',
                           style:TextStyle(
                             color:Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold

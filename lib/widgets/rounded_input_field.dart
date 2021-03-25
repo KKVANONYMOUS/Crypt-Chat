@@ -28,6 +28,9 @@ class RoundedInputField extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: TextFormField(
+        style: TextStyle(
+          color:Colors.black87
+        ),
         validator: validator,
         controller: controller,
         cursorColor: Theme.of(context).primaryColor,
@@ -37,6 +40,7 @@ class RoundedInputField extends StatelessWidget {
             color:Theme.of(context).primaryColor,
           ),
           hintText: hintText,
+          hintStyle: TextStyle(fontSize: 15.0),
           border:InputBorder.none,
         ),
       ),

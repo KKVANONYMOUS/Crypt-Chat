@@ -25,10 +25,10 @@ class _ChatRoomsState extends State<ChatRooms> {
     return StreamBuilder(
         stream: ChatRoomsStream,
         builder: (context,snapshot){
-          return snapshot.hasData ? ListView.builder(
+          return snapshot.hasData ? ListView.separated(
               shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
-              physics: NeverScrollableScrollPhysics(),
+              separatorBuilder: (context,index)=>Divider(height: 0.5),
               itemBuilder: (context,index){
                 return ChatRoomsItem(
                     snapshot.data.docs[index].data()["chatRoomID"],
@@ -40,7 +40,7 @@ class _ChatRoomsState extends State<ChatRooms> {
   }
 
   Widget ChatRoomsItem(String ChatRoomID){
-    return GestureDetector(
+    return InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(ChatRoomID)));
       },

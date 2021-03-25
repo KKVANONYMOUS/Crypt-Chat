@@ -38,6 +38,7 @@ class RoundedPasswordField extends StatelessWidget {
             color:Theme.of(context).primaryColor,
           ),
           hintText: hintText,
+          hintStyle: TextStyle(fontSize: 15.0),
           border:InputBorder.none,
         ),
       ),

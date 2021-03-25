@@ -110,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           GestureDetector(
                             onTap: (){
-                              Navigator.push(context,MaterialPageRoute(builder: (context){return LoginScreen();}));
+                              Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){return LoginScreen();}));
                             },
                             child: Text(
                                 'Login',

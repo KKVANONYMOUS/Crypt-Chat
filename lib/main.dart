@@ -1,3 +1,4 @@
+import 'package:crypt_chat/theme.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/views/chat_rooms_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,10 +39,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CryptChat',
-      theme: ThemeData(
-        primaryColor: Color(0xFF6F35A5),
-        scaffoldBackgroundColor: Colors.white,
-      ),
+      theme: lightThemeData(context),
+      darkTheme: darkThemeData(context),
       home:isLoggedIn != null ? isLoggedIn ? ChatRooms():WelcomeScreen() : WelcomeScreen(),
     );
   }
