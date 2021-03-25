@@ -75,17 +75,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //     'LOGIN',
-                  //     style:TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: Theme.of(context).primaryColor
-                  //     )
-                  // ),
-                  //SizedBox(height: screenSize.height * 0.03),
+
                   Image.asset(
                     "assets/images/login.png",
                     height: screenSize.height * 0.45,
+                  ),
+                  Text(
+                      'LOGIN',
+                      style:TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: MediaQuery.of(context).platformBrightness==Brightness.light ? Theme.of(context).primaryColor : Constants.kSecondaryColor,
+                          fontSize: 20.0
+                      )
                   ),
                   SizedBox(height: screenSize.height * 0.03),
                   Form(
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               .color
                         )
                       ),
-                      GestureDetector(
+                      InkWell(
                         onTap: (){
                           Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){return SignUpScreen();}));
                         },
