@@ -1,3 +1,4 @@
+import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/views/chat_rooms_view.dart';
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
@@ -74,14 +75,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                          'SIGN UP',
-                          style:TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).primaryColor
-                          )
-                      ),
-                      SizedBox(height: screenSize.height * 0.03),
+                      // Text(
+                      //     'SIGN UP',
+                      //     style:TextStyle(
+                      //         fontWeight: FontWeight.bold,
+                      //         color: Theme.of(context).primaryColor
+                      //     )
+                      // ),
+                      // SizedBox(height: screenSize.height * 0.03),
                       SvgPicture.asset(
                         "assets/images/signup.svg",
                         height: screenSize.height * 0.45,
@@ -97,15 +98,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ],
                         ),
                       ),
-                      RoundedButton(screenSize: screenSize,text:'SIGN UP', color: Theme.of(context).primaryColor,textColor:Colors.white,press: signUpUser),
+                      RoundedButton(screenSize: screenSize,text:'Register', color: Theme.of(context).primaryColor,textColor:Colors.white,press: signUpUser),
                       SizedBox(height: screenSize.height * 0.02),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                              'Already have an account ',
+                              'Already have an account? ',
                               style:TextStyle(
-                                  color:Theme.of(context).primaryColor
+                                  color:Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      .color
                               )
                           ),
                           GestureDetector(
@@ -115,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             child: Text(
                                 'Login',
                                 style:TextStyle(
-                                    color:Theme.of(context).primaryColor,
+                                    color:MediaQuery.of(context).platformBrightness==Brightness.light ? Theme.of(context).primaryColor : Constants.kSecondaryColor,
                                     fontWeight: FontWeight.bold,
                                 )
                             ),

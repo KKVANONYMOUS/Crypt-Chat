@@ -35,7 +35,6 @@ class WelcomeScreen extends StatelessWidget {
                       "assets/images/welcome_screen.png",
                       height: screenSize.height * 0.5,
                     ),
-
                     Text(
                       "Experience a new way to keep your chats \nsafe and secure",
                       textAlign: TextAlign.center,

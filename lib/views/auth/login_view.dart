@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
@@ -104,7 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Don’t have an Account ? ',
                         style:TextStyle(
-                          color:Theme.of(context).primaryColor
+                          color:Theme.of(context)
+                              .textTheme
+                              .headline5
+                              .color
                         )
                       ),
                       GestureDetector(
@@ -114,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text(
                           'Register',
                           style:TextStyle(
-                            color:Theme.of(context).primaryColor,
+                            color: MediaQuery.of(context).platformBrightness==Brightness.light ? Theme.of(context).primaryColor : Constants.kSecondaryColor ,
                             fontWeight: FontWeight.bold
                           )
                         ),
