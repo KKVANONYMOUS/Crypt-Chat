@@ -19,18 +19,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Stream<QuerySnapshot> ChatMessageStream;
 
   Widget chatMessageList(){
-    ScrollController _scrollController = ScrollController();;
 
-    _scrollToBottom() {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
     return StreamBuilder(
       stream: ChatMessageStream,
       builder: (context,snapshot){
         return snapshot.hasData ? ListView.builder(
           shrinkWrap: true,
           itemCount: snapshot.data.docs.length,
-          physics: NeverScrollableScrollPhysics(),
+
           itemBuilder: (context,index){
             String msg=snapshot.data.docs[index].data()["message"];
             return ChatMessageItem(

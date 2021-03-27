@@ -20,6 +20,8 @@ class _ChatRoomsState extends State<ChatRooms> {
 
   Stream ChatRoomsStream;
 
+  int currIndex=1;
+
   Widget chatRoomsList(){
 
     return StreamBuilder(
@@ -105,7 +107,7 @@ class _ChatRoomsState extends State<ChatRooms> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-              fontSize: screenSize.height * 0.03
+            fontSize: screenSize.height * 0.03
           ),
         ),
         actions: [
@@ -124,26 +126,97 @@ class _ChatRoomsState extends State<ChatRooms> {
       body:Container(
          margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
         color: Colors.white,
-        // decoration: BoxDecoration(
-        //   color:Colors.white,
-        //   borderRadius: BorderRadius.only(
-        //     topLeft: Radius.circular(30.0),
-        //     topRight: Radius.circular(30.0)
-        //   )
-        // ),
-        child: Column(
-          children: [
-            chatRoomsList(),
-          ],
+
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              chatRoomsList(),
+              ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+                    ChatRoomsItem("admin_kunal"),
+            ],
+          ),
         ),
       ),
+      // body:SingleChildScrollView(
+      //   physics: BouncingScrollPhysics(),
+      //   child:Column(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       SafeArea(
+      //         child: Padding(
+      //           padding: EdgeInsets.only(left:16,right: 16,top:10),
+      //           child: Row(
+      //             children: [
+      //               Text(
+      //                 "Chats",
+      //                   style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)
+      //               )
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: EdgeInsets.only(top: 16,left: 16,right: 16),
+      //         child: TextField(
+      //           decoration: InputDecoration(
+      //             hintText: "Search...",
+      //             hintStyle: TextStyle(color: Colors.grey.shade600),
+      //             prefixIcon: Icon(Icons.search,color: Colors.grey.shade600, size: 20,),
+      //             filled: true,
+      //             fillColor: Colors.grey.shade100,
+      //             contentPadding: EdgeInsets.all(8),
+      //             enabledBorder: OutlineInputBorder(
+      //                 borderRadius: BorderRadius.circular(20),
+      //                 borderSide: BorderSide(
+      //                     color: Colors.grey.shade100
+      //                 )
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //       chatRoomsList(),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //       ChatRoomsItem("admin_kunal"),
+      //     ],
+      //   )
+      // ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.search),
+        child: Icon(Icons.person_add_alt_1,color: Colors.white),
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
           Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchScreen()));
         },
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currIndex,
+        onTap: (val){
+          setState(() {
+            currIndex=val;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.messenger),label: "Chats"),
+          BottomNavigationBarItem(icon: CircleAvatar(
+            backgroundImage: AssetImage("assets/images/user_avatar.png"),
+            radius: 12,
+          ),label: "Profile"),
+        ],
+      ),
+      
     );
   }
 }

@@ -39,12 +39,12 @@ ThemeData darkThemeData(BuildContext context) {
       secondary: Constants.kSecondaryColor,
       //error: kErrorColor,
     ),
-    // bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    //   backgroundColor: kContentColorLightTheme,
-    //   selectedItemColor: Colors.white70,
-    //   unselectedItemColor: kContentColorDarkTheme.withOpacity(0.32),
-    //   selectedIconTheme: IconThemeData(color: kPrimaryColor),
-    //   showUnselectedLabels: true,
-    // ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Constants.kContentColorLightTheme,
+      selectedItemColor: Colors.white70,
+      unselectedItemColor: Constants.kContentColorDarkTheme.withOpacity(0.32),
+      selectedIconTheme: IconThemeData(color: Constants.kPrimaryColor),
+      showUnselectedLabels: true,
+    ),
   );
 }
