@@ -1,12 +1,14 @@
-import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/utils/services/database.dart';
+import 'package:crypt_chat/utils/services/encryption_decryption.dart';
+import 'package:crypt_chat/views/auth/login_view.dart';
 import 'package:crypt_chat/views/chat_view.dart';
 import 'package:crypt_chat/views/search_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class ChatRooms extends StatefulWidget {
   @override
@@ -16,59 +18,76 @@ class ChatRooms extends StatefulWidget {
 class _ChatRoomsState extends State<ChatRooms> {
   AuthMethods authMethods = new AuthMethods();
   SharedPrefHelper sharedPrefHelper = new SharedPrefHelper();
-  DatabaseMethods databaseMethods= new DatabaseMethods();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
 
   Stream ChatRoomsStream;
 
-  int currIndex=1;
+  int currIndex = 0;
 
-  Widget chatRoomsList(){
-
+  Widget chatRoomsList() {
     return StreamBuilder(
         stream: ChatRoomsStream,
-        builder: (context,snapshot){
-          return snapshot.hasData ? ListView.separated(
-              shrinkWrap: true,
-              itemCount: snapshot.data.docs.length,
-              separatorBuilder: (context,index)=>Divider(height: 0.5),
-              itemBuilder: (context,index){
-                return ChatRoomsItem(
-                    snapshot.data.docs[index].data()["chatRoomID"],
-                );
-              }
-          ) : Container();
-        }
-    );
+        builder: (context, snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (context, index) {
+                    String ChatRoomID =
+                        snapshot.data.docs[index].data()["chatRoomID"];
+                    String lastMessage = EncryptionDecryption.decryptMessage(
+                        encrypt.Encrypted.fromBase64(snapshot.data.docs[index]
+                            .data()["LastChatMessage"]));
+                    return ChatRoomsItem(ChatRoomID, lastMessage);
+                  })
+              : Container();
+        });
   }
 
-  Widget ChatRoomsItem(String ChatRoomID){
+  Widget ChatRoomsItem(String ChatRoomID, String lastMessage) {
+    String username =
+        ChatRoomID.replaceAll('_', "").replaceAll(Constants.currentUser, "");
     return InkWell(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(ChatRoomID)));
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ChatScreen(ChatRoomID)));
       },
       child: Container(
-        padding: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
-          children:[
+          children: [
             Expanded(
               child: Row(
-                children:[
+                children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage("assets/images/user_avatar.png"),
-                    maxRadius: 30,
+                    backgroundImage:
+                        AssetImage("assets/images/user_avatar.png"),
+                    maxRadius: 28,
                   ),
-                  SizedBox(width: 16,),
+                  SizedBox(
+                    width: 16,
+                  ),
                   Expanded(
                     child: Container(
-                      color: Colors.transparent,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(ChatRoomID.replaceAll('_', "").replaceAll(Constants.currentUser, "").toUpperCase(), style: TextStyle(fontSize: 16))
+                          Text(
+                              username[0].toUpperCase() +
+                                  username.substring((1)),
+                              style: TextStyle(fontSize: 16)),
+                          SizedBox(height: 6),
+                          Text(
+                              lastMessage.length > 20
+                                  ? lastMessage.substring(0, 20) + "..."
+                                  : lastMessage,
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey.shade600))
                         ],
                       ),
                     ),
                   ),
+                  Text("20:00", style: TextStyle(fontSize: 12))
                 ],
               ),
             ),
@@ -85,36 +104,34 @@ class _ChatRoomsState extends State<ChatRooms> {
   }
 
   void getCurrUserandChats() async {
-    Constants.currentUser=await sharedPrefHelper.getUsernameSharedPref();
-    databaseMethods.getChatRooms(Constants.currentUser)
-        .then((val)=>{
-      setState((){
-        ChatRoomsStream = val;
-      })
-    });
+    Constants.currentUser = await sharedPrefHelper.getUsernameSharedPref();
+    databaseMethods.getChatRooms(Constants.currentUser).then((val) => {
+          setState(() {
+            ChatRoomsStream = val;
+          })
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize=MediaQuery.of(context).size;
+    Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title:Text(
+        title: Text(
           'Chats',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: screenSize.height * 0.03
-          ),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: screenSize.height * 0.03),
         ),
         actions: [
           GestureDetector(
-            onTap: (){
+            onTap: () {
               authMethods.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -123,100 +140,52 @@ class _ChatRoomsState extends State<ChatRooms> {
           )
         ],
       ),
-      body:Container(
-         margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
-        color: Colors.white,
-
+      body: Container(
+        margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               chatRoomsList(),
-              ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
-                    ChatRoomsItem("admin_kunal"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
+              // ChatRoomsItem("admin_kunal","test message hai"),
             ],
           ),
         ),
       ),
-      // body:SingleChildScrollView(
-      //   physics: BouncingScrollPhysics(),
-      //   child:Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       SafeArea(
-      //         child: Padding(
-      //           padding: EdgeInsets.only(left:16,right: 16,top:10),
-      //           child: Row(
-      //             children: [
-      //               Text(
-      //                 "Chats",
-      //                   style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold)
-      //               )
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: EdgeInsets.only(top: 16,left: 16,right: 16),
-      //         child: TextField(
-      //           decoration: InputDecoration(
-      //             hintText: "Search...",
-      //             hintStyle: TextStyle(color: Colors.grey.shade600),
-      //             prefixIcon: Icon(Icons.search,color: Colors.grey.shade600, size: 20,),
-      //             filled: true,
-      //             fillColor: Colors.grey.shade100,
-      //             contentPadding: EdgeInsets.all(8),
-      //             enabledBorder: OutlineInputBorder(
-      //                 borderRadius: BorderRadius.circular(20),
-      //                 borderSide: BorderSide(
-      //                     color: Colors.grey.shade100
-      //                 )
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       chatRoomsList(),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //       ChatRoomsItem("admin_kunal"),
-      //     ],
-      //   )
-      // ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.person_add_alt_1,color: Colors.white),
+        child: Icon(Icons.person_add_alt_1, color: Colors.white),
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchScreen()));
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SearchScreen()));
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currIndex,
-        onTap: (val){
+        onTap: (val) {
           setState(() {
-            currIndex=val;
+            currIndex = val;
           });
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.messenger),label: "Chats"),
-          BottomNavigationBarItem(icon: CircleAvatar(
-            backgroundImage: AssetImage("assets/images/user_avatar.png"),
-            radius: 12,
-          ),label: "Profile"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.message_rounded), label: "Chats"),
+          BottomNavigationBarItem(
+              icon: CircleAvatar(
+                backgroundImage: AssetImage("assets/images/user_avatar.png"),
+                radius: 12,
+              ),
+              label: "Profile"),
         ],
       ),
-      
     );
   }
 }

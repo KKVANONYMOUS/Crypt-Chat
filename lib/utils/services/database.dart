@@ -1,34 +1,59 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DatabaseMethods{
+class DatabaseMethods {
   getUserInfoByUsername(String username) async {
-    return await FirebaseFirestore.instance.collection('users')
-        .where('username',isEqualTo: username).get();
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
   }
 
   getUserInfoByEmail(String email) async {
-    return await FirebaseFirestore.instance.collection('users')
-        .where('email',isEqualTo: email).get();
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
   }
 
-  uploadUserInfo(Map<String,String > userInfoMap){
+  uploadUserInfo(Map<String, String> userInfoMap) {
     FirebaseFirestore.instance.collection('users').add(userInfoMap);
   }
 
-  createChatRoom(String ChatRoomID,Map <String,dynamic> ChatRoomMap){
-    FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).set(ChatRoomMap);
+  createChatRoom(String ChatRoomID, Map<String, dynamic> ChatRoomMap) {
+    FirebaseFirestore.instance
+        .collection('ChatRooms')
+        .doc(ChatRoomID)
+        .set(ChatRoomMap);
   }
 
-  addChatMessage(String ChatRoomID,Map <String,dynamic> ChatMessageMap){
-    FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').add(ChatMessageMap);
+  addChatMessage(String ChatRoomID, Map<String, dynamic> ChatMessageMap) {
+    FirebaseFirestore.instance
+        .collection('ChatRooms')
+        .doc(ChatRoomID)
+        .collection('chats')
+        .add(ChatMessageMap);
+  }
+
+  addLastChatMessage(String ChatRoomID, String lastChatMessage) {
+    FirebaseFirestore.instance
+        .collection('ChatRooms')
+        .doc(ChatRoomID)
+        .update({'LastChatMessage': lastChatMessage});
   }
 
   getChatMessage(String ChatRoomID) async {
-    return await FirebaseFirestore.instance.collection('ChatRooms').doc(ChatRoomID).collection('chats').orderBy("time",descending: false).snapshots();
-  }
-  
-  getChatRooms(String username) async {
-    return await FirebaseFirestore.instance.collection('ChatRooms').where('users',arrayContains: username).snapshots();
+    return await FirebaseFirestore.instance
+        .collection('ChatRooms')
+        .doc(ChatRoomID)
+        .collection('chats')
+        .orderBy("time", descending: false)
+        .snapshots();
   }
 
+  getChatRooms(String username) async {
+    return await FirebaseFirestore.instance
+        .collection('ChatRooms')
+        .where('users', arrayContains: username)
+        .snapshots();
+  }
 }

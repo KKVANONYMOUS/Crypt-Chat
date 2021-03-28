@@ -17,6 +17,8 @@ ThemeData lightThemeData(BuildContext context) {
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+      unselectedLabelStyle: TextStyle(fontSize: 12),
       selectedItemColor: Constants.kContentColorLightTheme.withOpacity(0.7),
       unselectedItemColor: Constants.kContentColorLightTheme.withOpacity(0.32),
       selectedIconTheme: IconThemeData(color: Constants.kPrimaryColor),
@@ -29,7 +31,7 @@ ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
     primaryColor: Constants.kPrimaryColor,
     scaffoldBackgroundColor: Constants.kContentColorLightTheme,
-      hintColor: Colors.black54,
+    hintColor: Colors.black54,
     //appBarTheme: Constants.appBarTheme,
     iconTheme: IconThemeData(color: Constants.kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
@@ -42,8 +44,10 @@ ThemeData darkThemeData(BuildContext context) {
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Constants.kContentColorLightTheme,
       selectedItemColor: Colors.white70,
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+      unselectedLabelStyle: TextStyle(fontSize: 12),
       unselectedItemColor: Constants.kContentColorDarkTheme.withOpacity(0.32),
-      selectedIconTheme: IconThemeData(color: Constants.kPrimaryColor),
+      selectedIconTheme: IconThemeData(color: Constants.kSecondaryColor),
       showUnselectedLabels: true,
     ),
   );
