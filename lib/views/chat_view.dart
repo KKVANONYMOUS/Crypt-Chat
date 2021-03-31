@@ -138,14 +138,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
       String encryptedMessage =
           EncryptionDecryption.encryptMessage(textEditingController.text);
+      int time=DateTime.now().millisecondsSinceEpoch;
       Map<String, dynamic> ChatMessageMap = {
         "message": encryptedMessage,
         "sentBy": Constants.currentUser,
-        "time": DateTime.now().millisecondsSinceEpoch
+        "time": time
       };
 
       databaseMethods.addChatMessage(widget.ChatRoomID, ChatMessageMap);
-      databaseMethods.addLastChatMessage(widget.ChatRoomID, encryptedMessage);
+      databaseMethods.addLastChat(widget.ChatRoomID, encryptedMessage,time);
       textEditingController.text = "";
     }
   }

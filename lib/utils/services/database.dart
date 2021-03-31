@@ -34,11 +34,11 @@ class DatabaseMethods {
         .add(ChatMessageMap);
   }
 
-  addLastChatMessage(String ChatRoomID, String lastChatMessage) {
+  addLastChat(String ChatRoomID, String lastChatMessage,int time) {
     FirebaseFirestore.instance
         .collection('ChatRooms')
         .doc(ChatRoomID)
-        .update({'LastChatMessage': lastChatMessage});
+        .update({'LastChat.Message': lastChatMessage,'LastChat.Time':time});
   }
 
   getChatMessage(String ChatRoomID) async {

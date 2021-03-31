@@ -37,16 +37,29 @@ class _ChatRoomsState extends State<ChatRooms> {
                         snapshot.data.docs[index].data()["chatRoomID"];
                     String lastMessage = EncryptionDecryption.decryptMessage(
                         encrypt.Encrypted.fromBase64(snapshot.data.docs[index]
-                            .data()["LastChatMessage"]));
-                    return ChatRoomsItem(ChatRoomID, lastMessage);
+                            .data()["LastChat"]["Message"]));
+                    int lastMessageTime =
+                        snapshot.data.docs[index].data()["LastChat"]["Time"];
+                    return ChatRoomsItem(ChatRoomID, lastMessage,
+                        DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
                   })
               : Container();
         });
   }
 
-  Widget ChatRoomsItem(String ChatRoomID, String lastMessage) {
+  Widget ChatRoomsItem(
+      String ChatRoomID, String lastMessage, final lastMessageTime) {
     String username =
         ChatRoomID.replaceAll('_', "").replaceAll(Constants.currentUser, "");
+    String lastMessageDate = lastMessageTime.toString().substring(0, 10);
+    String lastMessageTimestamp = lastMessageTime.toString().substring(11, 16);
+    String currDate = DateTime.fromMillisecondsSinceEpoch(
+            DateTime.now().millisecondsSinceEpoch)
+        .toString()
+        .substring(0, 10);
+
+    String lastMessageDateFormatted =
+        "${lastMessageDate.substring(8, 10)}/${lastMessageDate.substring(5, 7)}/${lastMessageDate.substring(2, 4)}";
     return InkWell(
       onTap: () {
         Navigator.push(context,
@@ -87,7 +100,11 @@ class _ChatRoomsState extends State<ChatRooms> {
                       ),
                     ),
                   ),
-                  Text("20:00", style: TextStyle(fontSize: 12))
+                  Text(
+                      lastMessageDate == currDate
+                          ? lastMessageTimestamp
+                          : lastMessageDateFormatted,
+                      style: TextStyle(fontSize: 12))
                 ],
               ),
             ),
