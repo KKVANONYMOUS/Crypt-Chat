@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
+  getAllUsers() async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .get();
+  }
+
   getUserInfoByUsername(String username) async {
     return await FirebaseFirestore.instance
         .collection('users')

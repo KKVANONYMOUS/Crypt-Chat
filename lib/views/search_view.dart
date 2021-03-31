@@ -19,6 +19,8 @@ class _SearchScreenState extends State<SearchScreen> {
   QuerySnapshot searchUserSnapshot;
   TextEditingController SearchEditingController=new TextEditingController();
 
+  QuerySnapshot UsersSnapshot;
+
   Widget searchUsersList(){
     return searchUserSnapshot !=null ? ListView.builder(
       shrinkWrap: true,
@@ -48,6 +50,64 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       return "$a\_$b";
     }
+  }
+
+  Widget userList() {
+    return UsersSnapshot !=null ? ListView.builder(
+        shrinkWrap: true,
+        itemCount: UsersSnapshot.docs.length,
+        itemBuilder: (context,index){
+          return UserItem(
+            UsersSnapshot.docs[index].data()["username"],
+          );
+        }) : Container();
+  }
+
+  Widget UserItem(String username) {
+    return username != Constants.currentUser ? InkWell(
+      onTap: (){
+        createChatRoom(username);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage:
+                    AssetImage("assets/images/user_avatar.png"),
+                    maxRadius: 28,
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              username[0].toUpperCase() +
+                                  username.substring((1)),
+                              style: TextStyle(fontSize: 16)),
+                          SizedBox(height: 6),
+                          Text(
+                              "Hey there I am using crypt_chat",
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey.shade600))
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ):Container();
   }
 
   Widget SearchListItem (String username,String email){
@@ -81,37 +141,51 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   @override
+  void initState()  {
+    databaseMethods.getAllUsers()
+        .then((val)=>{
+      setState((){
+        UsersSnapshot=val;
+      })
+    });
+    super.initState();
+  }
+  //
+  // void getAllUsers() async {
+  //
+  // }
+
+  @override
   Widget build(BuildContext context) {
     Size screenSize=MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+    return UsersSnapshot!=null ? Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         elevation: 0,
-        title:Text(
-          'Chats',
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: screenSize.height * 0.03
-          ),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: (){
-              authMethods.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(Icons.exit_to_app),
+        title:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Users',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: screenSize.height * 0.028
+              ),
             ),
-          )
-        ],
+            Text(
+              "${UsersSnapshot.docs.length-1} users",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal,
+                  fontSize: screenSize.height * 0.025
+              ),
+            ),
+          ],
+        )
+
       ),
       body:Container(
         margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
-        color: Colors.white,
         child: Column(
           children: [
             Container(
@@ -123,6 +197,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       controller: SearchEditingController,
                       decoration: InputDecoration(
                         hintText: 'Search username...',
+                        hintStyle: TextStyle(color: Theme.of(context).primaryColor),
                         border:InputBorder.none,
                       ),
                       style: TextStyle(
@@ -130,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     )
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap: (){
                       databaseMethods.getUserInfoByUsername(SearchEditingController.text)
                           .then((val)=>
@@ -152,11 +227,15 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               )
             ),
-            Expanded(child: searchUsersList())
+            //Expanded(child: searchUsersList())
+            Expanded(child:userList())
           ],
         ),
       ),
 
+    ):Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }

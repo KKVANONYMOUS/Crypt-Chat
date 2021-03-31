@@ -35,11 +35,15 @@ class _ChatRoomsState extends State<ChatRooms> {
                   itemBuilder: (context, index) {
                     String ChatRoomID =
                         snapshot.data.docs[index].data()["chatRoomID"];
-                    String lastMessage = EncryptionDecryption.decryptMessage(
-                        encrypt.Encrypted.fromBase64(snapshot.data.docs[index]
-                            .data()["LastChat"]["Message"]));
-                    int lastMessageTime =
-                        snapshot.data.docs[index].data()["LastChat"]["Time"];
+                    String lastMessage="";
+                    int lastMessageTime=0;
+                    if(snapshot.data.docs[index].data()["LastChat"]!=null) {
+                      lastMessage = EncryptionDecryption.decryptMessage(
+                          encrypt.Encrypted.fromBase64(snapshot.data.docs[index]
+                              .data()["LastChat"]["Message"]));
+                      lastMessageTime =
+                      snapshot.data.docs[index].data()["LastChat"]["Time"];
+                    }
                     return ChatRoomsItem(ChatRoomID, lastMessage,
                         DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
                   })
