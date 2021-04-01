@@ -163,20 +163,11 @@ class _ChatRoomsState extends State<ChatRooms> {
         ],
       ),
       body: Container(
-        margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               chatRoomsList(),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
-              // ChatRoomsItem("admin_kunal","test message hai"),
             ],
           ),
         ),

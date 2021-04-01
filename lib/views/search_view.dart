@@ -173,7 +173,7 @@ class _SearchScreenState extends State<SearchScreen> {
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: screenSize.height * 0.028
+                  fontSize: screenSize.height * 0.024
               ),
             ),
             Text(
@@ -181,31 +181,34 @@ class _SearchScreenState extends State<SearchScreen> {
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.normal,
-                  fontSize: screenSize.height * 0.025
+                  fontSize: screenSize.height * 0.02
               ),
             ),
           ],
         )
-
       ),
       body:Container(
-        margin: EdgeInsets.fromLTRB(0, 10.0, 0, 0),
         child: Column(
           children: [
+            Divider(color: Colors.white70,height: 0.5),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
               child:Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: SearchEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Search username...',
-                        hintStyle: TextStyle(color: Theme.of(context).primaryColor),
-                        border:InputBorder.none,
-                      ),
-                      style: TextStyle(
-                        fontSize: 18.0
+                    child: Container(
+                      height: screenSize.height * 0.06,
+                      child: TextField(
+                        controller: SearchEditingController,
+                        style: TextStyle(
+                          fontSize: 16
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Search username...',
+                          hintStyle: TextStyle(color: Colors.white70),
+                          border:InputBorder.none,
+                          filled: true,
+                          fillColor: Constants.kPrimaryColor,
+                        ),
                       ),
                     )
                   ),
@@ -219,15 +222,14 @@ class _SearchScreenState extends State<SearchScreen> {
                       );
                     },
                     child: Container(
-                      height: screenSize.height * 0.05,
+                      height: screenSize.height * 0.06,
                         width: screenSize.width * 0.125,
                       decoration: BoxDecoration(
-                          color: Color(0xFFF1E6FF),
-                        borderRadius: BorderRadius.circular(30.0)
+                          color: Theme.of(context).primaryColor,
                       ),
-                      child: Icon(Icons.search)
+                      child: Icon(Icons.search,color: Colors.white70,)
                     ),
-                  )
+                  ),
                 ],
               )
             ),
