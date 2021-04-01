@@ -163,14 +163,7 @@ class _ChatRoomsState extends State<ChatRooms> {
         ],
       ),
       body: Container(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              chatRoomsList(),
-            ],
-          ),
-        ),
+        child: chatRoomsList(),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.person_add_alt_1, color: Colors.white),
