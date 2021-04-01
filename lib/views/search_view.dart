@@ -20,6 +20,7 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController SearchEditingController=new TextEditingController();
 
   QuerySnapshot UsersSnapshot;
+  QuerySnapshot ChatRoomsSnapshot;
 
   Widget searchUsersList(){
     return searchUserSnapshot !=null ? ListView.builder(
@@ -66,7 +67,11 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget UserItem(String username) {
     return username != Constants.currentUser ? InkWell(
       onTap: (){
-        createChatRoom(username);
+        String chatRoomID=getChatRoomId(username, Constants.currentUser);
+        databaseMethods.getCurrUserChatRooms(chatRoomID)
+        .then((val){
+          val.size>0 ? Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ChatScreen(chatRoomID))) : createChatRoom(username);
+        });
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -111,7 +116,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget SearchListItem (String username,String email){
-    Size screenSize=MediaQuery.of(context).size;
     return username != Constants.currentUser ? GestureDetector(
       onTap: (){
         createChatRoom(username);
@@ -142,18 +146,18 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState()  {
+    getAllUsers();
+    super.initState();
+  }
+
+  void getAllUsers() {
     databaseMethods.getAllUsers()
         .then((val)=>{
       setState((){
         UsersSnapshot=val;
       })
     });
-    super.initState();
   }
-  //
-  // void getAllUsers() async {
-  //
-  // }
 
   @override
   Widget build(BuildContext context) {

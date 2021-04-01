@@ -56,6 +56,7 @@ class _ChatRoomsState extends State<ChatRooms> {
     String username =
         ChatRoomID.replaceAll('_', "").replaceAll(Constants.currentUser, "");
     String lastMessageDate = lastMessageTime.toString().substring(0, 10);
+
     String lastMessageTimestamp = lastMessageTime.toString().substring(11, 16);
     String currDate = DateTime.fromMillisecondsSinceEpoch(
             DateTime.now().millisecondsSinceEpoch)
@@ -104,11 +105,11 @@ class _ChatRoomsState extends State<ChatRooms> {
                       ),
                     ),
                   ),
-                  Text(
+                  lastMessageDate!="1970-01-01" ? Text(
                       lastMessageDate == currDate
                           ? lastMessageTimestamp
                           : lastMessageDateFormatted,
-                      style: TextStyle(fontSize: 12))
+                      style: TextStyle(fontSize: 12)) : Container()
                 ],
               ),
             ),
