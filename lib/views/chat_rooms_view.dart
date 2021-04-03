@@ -6,6 +6,7 @@ import 'package:crypt_chat/views/auth/login_view.dart';
 import 'package:crypt_chat/views/chat_view.dart';
 import 'package:crypt_chat/views/search_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
+import 'package:crypt_chat/widgets/alert_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -150,10 +151,15 @@ class _ChatRoomsState extends State<ChatRooms> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {
-              authMethods.signOut();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+            onTap: () async {
+
+              final action=await AlertDialogsClass.logoutDialog(context,'Logout','Are you sure you want to exit?');
+              if(action==DialogsAction.yes){
+                authMethods.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              }
+
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
