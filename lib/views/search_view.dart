@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
+import 'package:crypt_chat/utils/helpers/helper_functions.dart';
+import 'package:crypt_chat/utils/helpers/helper_functions.dart';
+import 'package:crypt_chat/utils/helpers/helper_functions.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
 import 'package:crypt_chat/views/chat_view.dart';
@@ -36,7 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   createChatRoom(String username) {
     List<String> users = [username, Constants.currentUser];
-    String chatRoomID = getChatRoomId(username, Constants.currentUser);
+    String chatRoomID = HelperFunctions.getChatRoomId(username, Constants.currentUser);
     Map<String, dynamic> ChatRoomMap = {
       'chatRoomID': chatRoomID,
       'users': users
@@ -44,14 +47,6 @@ class _SearchScreenState extends State<SearchScreen> {
     databaseMethods.createChatRoom(chatRoomID, ChatRoomMap);
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (context) => ChatScreen(chatRoomID)));
-  }
-
-  getChatRoomId(String a, String b) {
-    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
-    } else {
-      return "$a\_$b";
-    }
   }
 
   Widget userList() {
@@ -71,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ? InkWell(
             onTap: () {
               String chatRoomID =
-                  getChatRoomId(username, Constants.currentUser);
+                  HelperFunctions.getChatRoomId(username, Constants.currentUser);
               databaseMethods.getCurrUserChatRooms(chatRoomID).then((val) {
                 val.size > 0
                     ? Navigator.pushReplacement(

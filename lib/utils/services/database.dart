@@ -67,6 +67,6 @@ class DatabaseMethods {
     return await FirebaseFirestore.instance
         .collection('ChatRooms')
         .where('chatRoomID',isEqualTo: ChatRoomID)
-        .get();
+        .snapshots();
   }
 }

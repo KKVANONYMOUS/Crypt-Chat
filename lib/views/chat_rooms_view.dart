@@ -1,4 +1,5 @@
 import 'package:crypt_chat/constants/app_constants.dart';
+import 'package:crypt_chat/utils/helpers/helper_functions.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/utils/services/database.dart';
 import 'package:crypt_chat/utils/services/encryption_decryption.dart';
@@ -25,6 +26,68 @@ class _ChatRoomsState extends State<ChatRooms> {
 
   int currIndex = 0;
 
+  Icon searchIcon = new Icon(Icons.search);
+  final TextEditingController SearchEditingController =
+      new TextEditingController();
+  String _searchText = "";
+
+  Widget appBarTitle = new Text(
+    'Chats',
+    style: TextStyle(
+        color: Colors.white60, fontWeight: FontWeight.bold, fontSize: 20),
+  );
+
+  _ChatRoomsState() {
+    SearchEditingController.addListener(() {
+      if (SearchEditingController.text.isNotEmpty) {
+        setState(() {
+          _searchText = SearchEditingController.text;
+        });
+        databaseMethods.getUserInfoByUsername(_searchText).then((val) {
+          if (val != null && val.size > 0) {
+            String ChatRoomID = HelperFunctions.getChatRoomId(
+                Constants.currentUser, _searchText);
+            databaseMethods.getCurrUserChatRooms(ChatRoomID).then((val) => {
+                  setState(() {
+                    ChatRoomsStream = val;
+                  })
+                });
+          } else {
+            getCurrUserandChats();
+          }
+        });
+      } else {
+        getCurrUserandChats();
+      }
+    });
+  }
+
+  void searchChatRoom() {
+    setState(() {
+      if (this.searchIcon.icon == Icons.search) {
+        this.searchIcon = new Icon(Icons.close);
+        this.appBarTitle = new TextField(
+          controller: SearchEditingController,
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search, color: Colors.white60),
+              hintText: 'Search...',
+              hintStyle: TextStyle(color: Colors.white54),
+              border: InputBorder.none),
+          cursorColor: Colors.white54,
+          style: TextStyle(color: Colors.white54),
+        );
+      } else {
+        this.searchIcon = new Icon(Icons.search);
+        this.appBarTitle = new Text(
+          'Chats',
+          style: TextStyle(
+              color: Colors.white60, fontWeight: FontWeight.bold, fontSize: 20),
+        );
+        SearchEditingController.clear();
+      }
+    });
+  }
+
   Widget chatRoomsList() {
     return StreamBuilder(
         stream: ChatRoomsStream,
@@ -36,14 +99,14 @@ class _ChatRoomsState extends State<ChatRooms> {
                   itemBuilder: (context, index) {
                     String ChatRoomID =
                         snapshot.data.docs[index].data()["chatRoomID"];
-                    String lastMessage="";
-                    int lastMessageTime=0;
-                    if(snapshot.data.docs[index].data()["LastChat"]!=null) {
+                    String lastMessage = "";
+                    int lastMessageTime = 0;
+                    if (snapshot.data.docs[index].data()["LastChat"] != null) {
                       lastMessage = EncryptionDecryption.decryptMessage(
                           encrypt.Encrypted.fromBase64(snapshot.data.docs[index]
                               .data()["LastChat"]["Message"]));
                       lastMessageTime =
-                      snapshot.data.docs[index].data()["LastChat"]["Time"];
+                          snapshot.data.docs[index].data()["LastChat"]["Time"];
                     }
                     return ChatRoomsItem(ChatRoomID, lastMessage,
                         DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
@@ -106,11 +169,13 @@ class _ChatRoomsState extends State<ChatRooms> {
                       ),
                     ),
                   ),
-                  lastMessageDate!="1970-01-01" ? Text(
-                      lastMessageDate == currDate
-                          ? lastMessageTimestamp
-                          : lastMessageDateFormatted,
-                      style: TextStyle(fontSize: 12)) : Container()
+                  lastMessageDate != "1970-01-01"
+                      ? Text(
+                          lastMessageDate == currDate
+                              ? lastMessageTimestamp
+                              : lastMessageDateFormatted,
+                          style: TextStyle(fontSize: 12))
+                      : Container()
                 ],
               ),
             ),
@@ -118,12 +183,6 @@ class _ChatRoomsState extends State<ChatRooms> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    getCurrUserandChats();
-    super.initState();
   }
 
   void getCurrUserandChats() async {
@@ -135,36 +194,38 @@ class _ChatRoomsState extends State<ChatRooms> {
         });
   }
 
+  void LogoutPressed() async {
+    final action = await AlertDialogsClass.logoutDialog(
+        context, 'Logout', 'Are you sure you want to exit?');
+    if (action == DialogsAction.yes) {
+      authMethods.signOut();
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    }
+  }
+
+  @override
+  void initState() {
+    getCurrUserandChats();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        //centerTitle: true,
         elevation: 0,
-        title: Text(
-          'Chats',
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: screenSize.height * 0.03),
+        title: appBarTitle,
+        leading: IconButton(
+          icon: searchIcon,
+          onPressed: searchChatRoom,
         ),
         actions: [
-          GestureDetector(
-            onTap: () async {
-
-              final action=await AlertDialogsClass.logoutDialog(context,'Logout','Are you sure you want to exit?');
-              if(action==DialogsAction.yes){
-                authMethods.signOut();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              }
-
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Icon(Icons.exit_to_app),
-            ),
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: LogoutPressed,
           )
         ],
       ),
