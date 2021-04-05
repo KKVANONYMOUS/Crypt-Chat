@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/services/database.dart';
 import 'package:crypt_chat/utils/services/encryption_decryption.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -18,6 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController textEditingController = new TextEditingController();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   Stream<QuerySnapshot> ChatMessageStream;
+  ScrollController controller = ScrollController();
 
   Widget chatMessageList() {
     return StreamBuilder(
@@ -25,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (context, snapshot) {
           return snapshot.hasData
               ? ListView.builder(
+            controller: controller,
                   shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
@@ -67,10 +72,22 @@ class _ChatScreenState extends State<ChatScreen> {
                       bottomRight: Radius.circular(25),
                     ),
             ),
-            child: Text(
-              message,
-              style:
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "16:28",
+                  style: TextStyle(
+                      color:Colors.grey,
+                    fontSize: 12
+                  ),
+                ),
+                Text(
+                  message,
+                  style:
                   TextStyle(color: isSentByMe ? Colors.white : Colors.black87),
+                ),
+              ],
             ),
           ),
           // SizedBox(width: 15),
@@ -127,14 +144,12 @@ class _ChatScreenState extends State<ChatScreen> {
     //   ),
     // );
   }
-
+   scrollToEnd(){
+     Timer(Duration(milliseconds: 500),
+             () => controller.jumpTo(controller.position.maxScrollExtent));
+   }
   sendMessage() {
     if (textEditingController.text.isNotEmpty) {
-      // Map <String,dynamic> ChatMessageMap = {
-      //   "message":textEditingController.text,
-      //   "sentBy": Constants.currentUser,
-      //   "time":DateTime.now().millisecondsSinceEpoch
-      // };
 
       String encryptedMessage =
           EncryptionDecryption.encryptMessage(textEditingController.text);
@@ -148,6 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
       databaseMethods.addChatMessage(widget.ChatRoomID, ChatMessageMap);
       databaseMethods.addLastChat(widget.ChatRoomID, encryptedMessage,time);
       textEditingController.text = "";
+      scrollToEnd();
     }
   }
 
@@ -158,12 +174,15 @@ class _ChatScreenState extends State<ChatScreen> {
         ChatMessageStream = val;
       });
     });
+    scrollToEnd();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    String username=widget.ChatRoomID.replaceAll("_", "")
+        .replaceAll(Constants.currentUser, "");
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
@@ -184,9 +203,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                        widget.ChatRoomID.replaceAll("_", "")
-                            .replaceAll(Constants.currentUser, "")
-                            .toUpperCase(),
+                  username[0].toUpperCase() +
+                  username.substring((1)),
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600)),
                     SizedBox(height: 6),
@@ -198,45 +216,110 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ],
           )),
-      body: Stack(
+      body: Column(
         children: [
-          chatMessageList(),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
-              height: 60,
-              width: double.infinity,
-              color: Colors.white,
-              child: Row(
-                children: [
-                  SizedBox(width: 15),
-                  Expanded(
-                    child: TextField(
-                      controller: textEditingController,
-                      decoration: InputDecoration(
-                          hintText: "Write message...",
-                          hintStyle: TextStyle(color: Colors.black54),
-                          border: InputBorder.none),
-                    ),
+          Expanded(child: chatMessageList()),
+            // child: Container(
+            //   padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+            //   height: 60,
+            //   width: double.infinity,
+            //   color: Colors.white,
+            //   child: Row(
+            //     children: [
+            //       SizedBox(width: 15),
+            //       Expanded(
+            //         child: TextField(
+            //           controller: textEditingController,
+            //           decoration: InputDecoration(
+            //               hintText: "Write message...",
+            //               hintStyle: TextStyle(color: Colors.black54),
+            //               border: InputBorder.none),
+            //         ),
+            //       ),
+            //       SizedBox(width: 15),
+            //       FloatingActionButton(
+            //         onPressed: () {
+            //           sendMessage();
+            //         },
+            //         child: Icon(
+            //           Icons.send,
+            //           color: Colors.white,
+            //           size: 18,
+            //         ),
+            //         backgroundColor: Theme.of(context).primaryColor,
+            //         elevation: 0,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 10.0,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     offset: Offset(0, 4),
+                  //     blurRadius: 32,
+                  //     color: Colors.grey,
+                  //   ),
+                  // ],
+                ),
+                child: SafeArea(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenSize.width * 0.05,
+                          ),
+                          decoration: BoxDecoration(
+                            color: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.withOpacity(0.05):Theme.of(context).primaryColor.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: TextField(
+                            onTap: (){
+                              Timer(
+                                  Duration(milliseconds: 300),
+                                      () => controller
+                                      .jumpTo(controller.position.maxScrollExtent));
+                            },
+                            controller: textEditingController,
+                            decoration: InputDecoration(
+                              hintText: "Type message...",
+                              hintStyle: TextStyle(
+                                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black:Colors.white,
+                                fontSize: 15
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Container(
+                        width: screenSize.width * 0.125,
+                        height:screenSize.width * 0.125,
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            sendMessage();
+                          },
+                          child: Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.9),
+                          elevation: 0,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 15),
-                  FloatingActionButton(
-                    onPressed: () {
-                      sendMessage();
-                    },
-                    child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    elevation: 0,
-                  ),
-                ],
-              ),
-            ),
-          ),
+                ),
+              )
+
         ],
       ),
     );

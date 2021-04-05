@@ -67,8 +67,8 @@ class _SearchScreenState extends State<SearchScreen> {
             onTap: () {
               String chatRoomID =
                   HelperFunctions.getChatRoomId(username, Constants.currentUser);
-              databaseMethods.getCurrUserChatRooms(chatRoomID).then((val) {
-                val.size > 0
+              databaseMethods.getCurrUserChatRoomsGet(chatRoomID).then((val) {
+                val.size>0
                     ? Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
