@@ -1,6 +1,6 @@
 import 'package:crypt_chat/theme.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
-import 'package:crypt_chat/views/chat_rooms_view.dart';
+import 'file:///F:/Flutter_Project/crypt_chat/lib/views/home_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:crypt_chat/views/welcome_view.dart';
@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       title: 'CryptChat',
       theme: lightThemeData(context),
       darkTheme: darkThemeData(context),
-      home:isLoggedIn != null ? isLoggedIn ? ChatRooms():WelcomeScreen() : WelcomeScreen(),
+      home:isLoggedIn != null ? isLoggedIn ? HomeScreen():WelcomeScreen() : WelcomeScreen(),
     );
   }
 }

@@ -5,9 +5,11 @@ import 'package:crypt_chat/utils/services/database.dart';
 import 'package:crypt_chat/utils/services/encryption_decryption.dart';
 import 'package:crypt_chat/views/auth/login_view.dart';
 import 'package:crypt_chat/views/chat_view.dart';
+import 'package:crypt_chat/views/profile_view.dart';
 import 'package:crypt_chat/views/search_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/widgets/alert_dialog.dart';
+import 'file:///F:/Flutter_Project/crypt_chat/lib/views/home_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -240,25 +242,8 @@ class _ChatRoomsState extends State<ChatRooms> {
               context, MaterialPageRoute(builder: (context) => SearchScreen()));
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currIndex,
-        onTap: (val) {
-          setState(() {
-            currIndex = val;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.message_rounded), label: "Chats"),
-          BottomNavigationBarItem(
-              icon: CircleAvatar(
-                backgroundImage: AssetImage("assets/images/user_avatar.png"),
-                radius: 12,
-              ),
-              label: "Profile"),
-        ],
-      ),
+      //
+      //bottomNavigationBar: BottomNavBar(),
     );
   }
 }

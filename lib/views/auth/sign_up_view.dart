@@ -1,14 +1,13 @@
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
-import 'package:crypt_chat/views/chat_rooms_view.dart';
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/auth/login_view.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
+import 'file:///F:/Flutter_Project/crypt_chat/lib/views/home_view.dart';
 import 'package:crypt_chat/widgets/rounded_button.dart';
 import 'package:crypt_chat/widgets/rounded_input_field.dart';
 import 'package:crypt_chat/widgets/rounded_password_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class SignUpScreen extends StatefulWidget {
 
@@ -50,7 +49,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           sharedPrefHelper.saveUserLoggedInSharedPref(true);
 
           Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => ChatRooms()
+              builder: (context) => HomeScreen()
           ));
         }
       });
