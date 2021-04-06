@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/services/database.dart';
@@ -29,11 +28,12 @@ class _ChatScreenState extends State<ChatScreen> {
         builder: (context, snapshot) {
           return snapshot.hasData
               ? ListView.builder(
-            controller: controller,
+                  controller: controller,
                   shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
                     String msg = snapshot.data.docs[index].data()["message"];
+                    int time = snapshot.data.docs[index].data()["time"];
                     return ChatMessageItem(
                         EncryptionDecryption.decryptMessage(
                             encrypt.Encrypted.fromBase64(msg)),
@@ -41,14 +41,25 @@ class _ChatScreenState extends State<ChatScreen> {
                                 snapshot.data.docs[index].data()["sentBy"]
                             ? true
                             : false,
-                        snapshot.data.docs[index].data()["time"]);
+                        DateTime.fromMillisecondsSinceEpoch(time));
                   })
               : Container();
         });
   }
 
-  Widget ChatMessageItem(String message, bool isSentByMe, int time) {
+  Widget ChatMessageItem(String message, bool isSentByMe, final time) {
     Size screenSize = MediaQuery.of(context).size;
+
+    String messageDate = time.toString().substring(0, 10);
+    String messageTimestamp = time.toString().substring(11, 16);
+    String currDate = DateTime.fromMillisecondsSinceEpoch(
+            DateTime.now().millisecondsSinceEpoch)
+        .toString()
+        .substring(0, 10);
+
+    String messageDateFormatted =
+        "${messageDate.substring(8, 10)}/${messageDate.substring(5, 7)}/${messageDate.substring(2, 4)}";
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
       child: Row(
@@ -76,84 +87,34 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "16:28",
-                  style: TextStyle(
-                      color:Colors.grey,
-                    fontSize: 12
-                  ),
+                  messageDate == currDate
+                      ? messageTimestamp
+                      : messageDateFormatted,
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
                 Text(
                   message,
-                  style:
-                  TextStyle(color: isSentByMe ? Colors.white : Colors.black87),
+                  style: TextStyle(
+                      color: isSentByMe ? Colors.white : Colors.black87),
                 ),
               ],
             ),
           ),
-          // SizedBox(width: 15),
-          // Text(
-          //   "16:28",
-          //   style: TextStyle(
-          //     color:Colors.grey
-          //   ),
-          // ),
         ],
       ),
     );
-    // return Container(
-    //   padding: EdgeInsets.only(
-    //       top: 8,
-    //       bottom: 8,
-    //       left: isSentByMe ? 0 : 24,
-    //       right: isSentByMe ? 24 : 0),
-    //   alignment: isSentByMe ? Alignment.centerRight : Alignment.centerLeft,
-    //   child: Container(
-    //     margin: isSentByMe
-    //         ? EdgeInsets.only(left: 30)
-    //         : EdgeInsets.only(right: 30),
-    //     padding: EdgeInsets.only(
-    //         top: 17, bottom: 17, left: 20, right: 20),
-    //     decoration: BoxDecoration(
-    //         borderRadius: isSentByMe ? BorderRadius.only(
-    //             topLeft: Radius.circular(23),
-    //             topRight: Radius.circular(23),
-    //             bottomLeft: Radius.circular(23)
-    //         ) :
-    //         BorderRadius.only(
-    //             topLeft: Radius.circular(23),
-    //             topRight: Radius.circular(23),
-    //             bottomRight: Radius.circular(23)),
-    //         gradient: LinearGradient(
-    //           colors: isSentByMe ? [
-    //             const Color(0xff007EF4),
-    //             const Color(0xff2A75BC)
-    //           ]
-    //               : [
-    //             Colors.grey,
-    //             Colors.grey
-    //           ],
-    //         )
-    //     ),
-    //     child: Text(message,
-    //         textAlign: TextAlign.start,
-    //         style: TextStyle(
-    //             color: Colors.white,
-    //             fontSize: 16,
-    //             fontFamily: 'OverpassRegular',
-    //             fontWeight: FontWeight.w300)),
-    //   ),
-    // );
   }
-   scrollToEnd(){
-     Timer(Duration(milliseconds: 500),
-             () => controller.jumpTo(controller.position.maxScrollExtent));
-   }
+
+  scrollToEnd() {
+    Timer(Duration(milliseconds: 500),
+        () => controller.jumpTo(controller.position.maxScrollExtent));
+  }
+
   sendMessage() {
     if (textEditingController.text.isNotEmpty) {
-
       String encryptedMessage =
           EncryptionDecryption.encryptMessage(textEditingController.text);
-      int time=DateTime.now().millisecondsSinceEpoch;
+      int time = DateTime.now().millisecondsSinceEpoch;
       Map<String, dynamic> ChatMessageMap = {
         "message": encryptedMessage,
         "sentBy": Constants.currentUser,
@@ -161,7 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
       };
 
       databaseMethods.addChatMessage(widget.ChatRoomID, ChatMessageMap);
-      databaseMethods.addLastChat(widget.ChatRoomID, encryptedMessage,time);
+      databaseMethods.addLastChat(widget.ChatRoomID, encryptedMessage, time);
       textEditingController.text = "";
       scrollToEnd();
     }
@@ -181,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    String username=widget.ChatRoomID.replaceAll("_", "")
+    String username = widget.ChatRoomID.replaceAll("_", "")
         .replaceAll(Constants.currentUser, "");
     return Scaffold(
       appBar: AppBar(
@@ -202,15 +163,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                  username[0].toUpperCase() +
-                  username.substring((1)),
+                    Text(username[0].toUpperCase() + username.substring((1)),
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                    SizedBox(height: 6),
-                    Text("Online",
-                        style:
-                            TextStyle(color: Colors.green[200], fontSize: 13)),
+                            fontSize: 20, fontWeight: FontWeight.w600)),
+                    // SizedBox(height: 6),
+                    // Text("Online",
+                    //     style:
+                    //         TextStyle(color: Colors.green[200], fontSize: 13)),
                   ],
                 ),
               ),
@@ -219,107 +178,73 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(child: chatMessageList()),
-            // child: Container(
-            //   padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
-            //   height: 60,
-            //   width: double.infinity,
-            //   color: Colors.white,
-            //   child: Row(
-            //     children: [
-            //       SizedBox(width: 15),
-            //       Expanded(
-            //         child: TextField(
-            //           controller: textEditingController,
-            //           decoration: InputDecoration(
-            //               hintText: "Write message...",
-            //               hintStyle: TextStyle(color: Colors.black54),
-            //               border: InputBorder.none),
-            //         ),
-            //       ),
-            //       SizedBox(width: 15),
-            //       FloatingActionButton(
-            //         onPressed: () {
-            //           sendMessage();
-            //         },
-            //         child: Icon(
-            //           Icons.send,
-            //           color: Colors.white,
-            //           size: 18,
-            //         ),
-            //         backgroundColor: Theme.of(context).primaryColor,
-            //         elevation: 0,
-            //       ),
-            //     ],
-            //   ),
-            // ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 10.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     offset: Offset(0, 4),
-                  //     blurRadius: 32,
-                  //     color: Colors.grey,
-                  //   ),
-                  // ],
-                ),
-                child: SafeArea(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: screenSize.width * 0.05,
-                          ),
-                          decoration: BoxDecoration(
-                            color: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).primaryColor.withOpacity(0.05):Theme.of(context).primaryColor.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: TextField(
-                            onTap: (){
-                              Timer(
-                                  Duration(milliseconds: 300),
-                                      () => controller
-                                      .jumpTo(controller.position.maxScrollExtent));
-                            },
-                            controller: textEditingController,
-                            decoration: InputDecoration(
-                              hintText: "Type message...",
-                              hintStyle: TextStyle(
-                                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black:Colors.white,
-                                fontSize: 15
-                              ),
-                              border: InputBorder.none,
-                            ),
-                          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 10.0,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenSize.width * 0.05,
+                      ),
+                      decoration: BoxDecoration(
+                        color: MediaQuery.of(context).platformBrightness ==
+                                Brightness.light
+                            ? Theme.of(context).primaryColor.withOpacity(0.05)
+                            : Theme.of(context).primaryColor.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: TextField(
+                        onTap: () {
+                          Timer(
+                              Duration(milliseconds: 300),
+                              () => controller
+                                  .jumpTo(controller.position.maxScrollExtent));
+                        },
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                          hintText: "Type message...",
+                          hintStyle: TextStyle(
+                              color:
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? Colors.black
+                                      : Colors.white,
+                              fontSize: 15),
+                          border: InputBorder.none,
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Container(
-                        width: screenSize.width * 0.125,
-                        height:screenSize.width * 0.125,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            sendMessage();
-                          },
-                          child: Icon(
-                            Icons.send,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.9),
-                          elevation: 0,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-
+                  SizedBox(width: 5),
+                  Container(
+                    width: screenSize.width * 0.125,
+                    height: screenSize.width * 0.125,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        sendMessage();
+                      },
+                      child: Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      backgroundColor:
+                          Theme.of(context).primaryColor.withOpacity(0.9),
+                      elevation: 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
