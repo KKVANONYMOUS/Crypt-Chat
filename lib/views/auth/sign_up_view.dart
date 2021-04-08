@@ -40,10 +40,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           Map <String,String> userInfoMap={
             'username':usernameEditingController.text,
-            'email':emailEditingController.text
+            'email':emailEditingController.text,
+            'name':usernameEditingController.text,
+            'bio':"It's my Crypt Chat!"
           };
 
-          databaseMethods.uploadUserInfo(userInfoMap);
+          databaseMethods.uploadUserInfo(usernameEditingController.text,userInfoMap);
           sharedPrefHelper.saveUsernameSharedPref(usernameEditingController.text);
           sharedPrefHelper.saveUserEmailSharedPref(emailEditingController.text);
           sharedPrefHelper.saveUserLoggedInSharedPref(true);

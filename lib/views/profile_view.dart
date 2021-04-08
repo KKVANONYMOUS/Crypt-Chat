@@ -1,16 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypt_chat/utils/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 
 class ProfileScreen extends StatefulWidget {
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  QuerySnapshot searchUserSnapshot;
+  TextEditingController NameEditingController = new TextEditingController();
+  TextEditingController BioEditingController = new TextEditingController();
+
+  @override
+  void initState() {
+    databaseMethods.getUserInfoByUsername(Constants.currentUser)
+    .then((val){
+      setState(() {
+        searchUserSnapshot=val;
+      });
+    });
+    super.initState();
+  }
+
+  updateUserInfo(){
+    if(NameEditingController.text.isNotEmpty && BioEditingController.text.isNotEmpty){
+      databaseMethods.updateUserInfo(Constants.currentUser, NameEditingController.text, BioEditingController.text);
+      print('Profile Updated');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize=MediaQuery.of(context).size;
-    return Scaffold(
+    return searchUserSnapshot!=null?Scaffold(
       appBar: AppBar(
         title: Text('Profile', style: TextStyle(
             color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
@@ -18,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.12,horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.1,horizontal: 15),
         child: ListView(
           children: [
             Center(
@@ -69,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Center(
               child: Container(
-                child: Text('@username',style: TextStyle(color:MediaQuery.of(context).platformBrightness==Brightness.light ? Constants.kPrimaryColor:Constants.kSecondaryColor,fontSize: 15,fontWeight: FontWeight.bold),),
+                child: Text('@${searchUserSnapshot.docs[0].data()['username']}',style: TextStyle(color:MediaQuery.of(context).platformBrightness==Brightness.light ? Constants.kPrimaryColor:Constants.kSecondaryColor,fontSize: 15,fontWeight: FontWeight.bold),),
               ),
             ),
             SizedBox(
@@ -79,12 +106,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
               child: Column(
                 children: [
-                  ProfileTextField(context,"Full Name", "Kunal Verma"),
-                  ProfileTextField(context,"Bio", "Hey, there I am using crypt_chat"),
+                  ProfileTextField(context,"Name", searchUserSnapshot.docs[0].data()['name'],NameEditingController),
+                  ProfileTextField(context,"Bio", searchUserSnapshot.docs[0].data()['bio'],BioEditingController),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.1),
                     child: RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        updateUserInfo();
+                      },
                       color: MediaQuery.of(context).platformBrightness==Brightness.light ? Constants.kPrimaryColor:Constants.kSecondaryColor,
                       padding: EdgeInsets.symmetric(horizontal: 50),
                       shape: RoundedRectangleBorder(
@@ -104,15 +133,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+    ):Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }
 
+
 Widget ProfileTextField(BuildContext context,
-    String labelText, String placeholder) {
+    String labelText, String placeholder, TextEditingController controller) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 35.0),
     child: TextField(
+      controller: controller ,
       decoration: InputDecoration(
         prefixIcon: Icon(
           labelText=='Bio'?Icons.info_outline_rounded:Icons.account_circle_rounded,
@@ -120,7 +154,6 @@ Widget ProfileTextField(BuildContext context,
         ),
           suffixIcon: IconButton(
             onPressed: () {
-
             },
             icon: Icon(
               Icons.edit,

@@ -31,7 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
             itemBuilder: (context, index) {
               return UserItem(
                 searchUserSnapshot.docs[index].data()["username"],
-                searchUserSnapshot.docs[index].data()["email"],
+                searchUserSnapshot.docs[index].data()["bio"],
               );
             })
         : Container();
@@ -56,12 +56,12 @@ class _SearchScreenState extends State<SearchScreen> {
             itemCount: UsersSnapshot.docs.length,
             itemBuilder: (context, index) {
               return UserItem(
-                  UsersSnapshot.docs[index].data()["username"], "test");
+                  UsersSnapshot.docs[index].data()["username"], UsersSnapshot.docs[index].data()["bio"]);
             })
         : Container();
   }
 
-  Widget UserItem(String username, String email) {
+  Widget UserItem(String username, String bio) {
     return username != Constants.currentUser
         ? InkWell(
             onTap: () {
@@ -101,7 +101,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         username.substring((1)),
                                     style: TextStyle(fontSize: 16)),
                                 SizedBox(height: 6),
-                                Text("Hey there I am using crypt_chat",
+                                Text(bio,
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: Colors.grey.shade600))
@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         height: screenSize.height * 0.06,
                         child: TextField(
                           controller: SearchEditingController,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16,color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Search username...',
                             hintStyle: TextStyle(color: Colors.white70),

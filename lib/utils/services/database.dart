@@ -14,6 +14,13 @@ class DatabaseMethods {
         .get();
   }
 
+  updateUserInfo(String username,String name,String bio) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(username)
+        .update({'name':name,'bio':bio});
+  }
+
   getUserInfoByEmail(String email) async {
     return await FirebaseFirestore.instance
         .collection('users')
@@ -21,8 +28,8 @@ class DatabaseMethods {
         .get();
   }
 
-  uploadUserInfo(Map<String, String> userInfoMap) {
-    FirebaseFirestore.instance.collection('users').add(userInfoMap);
+  uploadUserInfo(String username,Map<String, String> userInfoMap) {
+    FirebaseFirestore.instance.collection('users').doc(username).set(userInfoMap);
   }
 
   createChatRoom(String ChatRoomID, Map<String, dynamic> ChatRoomMap) {
