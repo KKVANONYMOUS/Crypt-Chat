@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   SharedPrefHelper sharedPrefHelper = new SharedPrefHelper();
   final formKey = GlobalKey<FormState>();
+  final scaffoldKey=GlobalKey<ScaffoldState>();
 
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
@@ -54,6 +55,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               builder: (context) => HomeScreen()
           ));
         }
+        else{
+          setState(() {
+            isLoading=false;
+          });
+          SnackBar snackBar=SnackBar(content: Text('Email already exists!',style: TextStyle(color: Colors.white)), backgroundColor: Colors.red,);
+          scaffoldKey.currentState.showSnackBar(snackBar);
+        }
       });
     }
   }
@@ -62,6 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     Size screenSize=MediaQuery.of(context).size;
     return Scaffold(
+      key: scaffoldKey,
         body:isLoading ? Container(
          child: Center(
            child:CircularProgressIndicator()

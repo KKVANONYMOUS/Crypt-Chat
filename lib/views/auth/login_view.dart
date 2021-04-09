@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   DatabaseMethods databaseMethods = new DatabaseMethods();
   SharedPrefHelper sharedPrefHelper = new SharedPrefHelper();
 
+  final scaffoldKey=GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
   TextEditingController emailEditingController = new TextEditingController();
@@ -50,8 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             isLoading=false;
           });
+          SnackBar snackBar=SnackBar(content: Text('Email or Password incorrect!',style: TextStyle(color: Colors.white)), backgroundColor: Colors.red,);
+          scaffoldKey.currentState.showSnackBar(snackBar);
         }
-        
+
       });
     }
   }
@@ -60,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size screenSize=MediaQuery.of(context).size;
     return Scaffold(
+      key: scaffoldKey,
       body:isLoading ? Container(
         child: Center(
             child:CircularProgressIndicator()
