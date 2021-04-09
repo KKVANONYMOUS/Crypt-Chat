@@ -94,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         child: Column(
                           children: [
                             RoundedInputField(screenSize: screenSize, validator: (value){ return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value) ? null : "Enter correct email";},hintText: 'Email Address',icon: Icons.email,controller:emailEditingController),
-                            RoundedInputField(screenSize: screenSize, validator: (value){ return value.isEmpty || value.length < 4 ? "Username too small" :null;},hintText: 'Username',icon: Icons.account_circle_rounded,controller:usernameEditingController),
+                            RoundedInputField(screenSize: screenSize, validator: (value){ return value.isEmpty || value.length < 4 ? "Username too small" : RegExp(r"^[a-zA-Z0-9]+$").hasMatch(value) ?null:"No special characters allowed";},hintText: 'Username',icon: Icons.account_circle_rounded,controller:usernameEditingController),
                             RoundedPasswordField(screenSize: screenSize , validator: (value){ return value.length < 6 ? "Password too small" : null; },hintText: 'Password',icon: Icons.lock,controller:passwordEditingController),
                           ],
                         ),
