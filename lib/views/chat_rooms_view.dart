@@ -111,7 +111,7 @@ class _ChatRoomsState extends State<ChatRooms> {
                     return ChatRoomsItem(ChatRoomID, lastMessage,
                         DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
                   })
-              : Container();
+              :Container();
         });
   }
 
@@ -240,8 +240,6 @@ class _ChatRoomsState extends State<ChatRooms> {
               context, MaterialPageRoute(builder: (context) => SearchScreen()));
         },
       ),
-      //
-      //bottomNavigationBar: BottomNavBar(),
     );
   }
 }

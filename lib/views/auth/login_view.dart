@@ -3,6 +3,7 @@ import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/shared_pref_helper.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
+import 'package:crypt_chat/views/auth/forgot_password_view.dart';
 import 'file:///F:/Flutter_Project/crypt_chat/lib/views/home_view.dart';
 import 'package:crypt_chat/widgets/rounded_button.dart';
 import 'package:crypt_chat/widgets/rounded_input_field.dart';
@@ -128,6 +129,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       )
                     ],
+                  ),
+                  SizedBox(height: screenSize.height*0.01,),
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context,MaterialPageRoute(builder: (context){return ForgotPassword();}));
+                    },
+                    child: Text(
+                        'Forgot Password',
+                        style:TextStyle(
+                            color: MediaQuery.of(context).platformBrightness==Brightness.light ? Theme.of(context).primaryColor : Constants.kSecondaryColor ,
+                            fontWeight: FontWeight.bold
+                        )
+                    ),
                   )
                 ],
               ),

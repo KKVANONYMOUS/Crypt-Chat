@@ -6,14 +6,12 @@ ThemeData lightThemeData(BuildContext context) {
   return ThemeData.light().copyWith(
     primaryColor: Constants.kPrimaryColor,
     scaffoldBackgroundColor: Colors.white,
-    //appBarTheme: Constants.appBarTheme,
     iconTheme: IconThemeData(color: Constants.kContentColorLightTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
         .apply(bodyColor: Constants.kContentColorLightTheme),
     colorScheme: ColorScheme.light(
       primary: Constants.kPrimaryColor,
       secondary: Constants.kSecondaryColor,
-      //error: Constants.kErrorColor,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
@@ -32,14 +30,12 @@ ThemeData darkThemeData(BuildContext context) {
     primaryColor: Constants.kPrimaryColor,
     scaffoldBackgroundColor: Constants.kContentColorLightTheme,
     hintColor: Colors.black54,
-    //appBarTheme: Constants.appBarTheme,
     iconTheme: IconThemeData(color: Constants.kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
         .apply(bodyColor: Constants.kContentColorDarkTheme),
     colorScheme: ColorScheme.dark().copyWith(
       primary: Constants.kPrimaryColor,
       secondary: Constants.kSecondaryColor,
-      //error: kErrorColor,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Constants.kContentColorLightTheme,

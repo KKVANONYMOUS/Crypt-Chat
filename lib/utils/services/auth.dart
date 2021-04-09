@@ -38,7 +38,7 @@ class AuthMethods{
       return await _auth.sendPasswordResetEmail(email: email);
     }
     catch(e){
-
+      print(e);
     }
   }
 
