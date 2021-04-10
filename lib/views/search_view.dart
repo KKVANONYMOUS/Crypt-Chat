@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:crypt_chat/utils/helpers/helper_functions.dart';
-import 'package:crypt_chat/utils/helpers/helper_functions.dart';
-import 'package:crypt_chat/utils/helpers/helper_functions.dart';
 import 'package:crypt_chat/utils/services/auth.dart';
 import 'package:crypt_chat/utils/services/database.dart';
 import 'package:crypt_chat/views/chat_view.dart';
@@ -31,6 +29,7 @@ class _SearchScreenState extends State<SearchScreen> {
             itemBuilder: (context, index) {
               return UserItem(
                 searchUserSnapshot.docs[index].data()["username"],
+                searchUserSnapshot.docs[index].data()["name"],
                 searchUserSnapshot.docs[index].data()["bio"],
               );
             })
@@ -56,12 +55,12 @@ class _SearchScreenState extends State<SearchScreen> {
             itemCount: UsersSnapshot.docs.length,
             itemBuilder: (context, index) {
               return UserItem(
-                  UsersSnapshot.docs[index].data()["username"], UsersSnapshot.docs[index].data()["bio"]);
+                  UsersSnapshot.docs[index].data()["username"],UsersSnapshot.docs[index].data()["name"], UsersSnapshot.docs[index].data()["bio"]);
             })
         : Container();
   }
 
-  Widget UserItem(String username, String bio) {
+  Widget UserItem(String username, String name,String bio) {
     return username != Constants.currentUser
         ? InkWell(
             onTap: () {
@@ -96,10 +95,17 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                    username[0].toUpperCase() +
-                                        username.substring((1)),
-                                    style: TextStyle(fontSize: 16)),
+                                Row(
+                                  children: [
+                                    Text(
+                                        name[0].toUpperCase() +
+                                            name.substring((1)),
+                                        style: TextStyle(fontSize: 16)),
+                                    Text(
+                                        ' - @${username}',
+                                        style: TextStyle(fontSize: 12,color: MediaQuery.of(context).platformBrightness==Brightness.light?Colors.black54:Colors.white54,fontWeight: FontWeight.bold))
+                                  ],
+                                ),
                                 SizedBox(height: 6),
                                 Text(bio,
                                     style: TextStyle(

@@ -20,6 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController textEditingController = new TextEditingController();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   Stream<QuerySnapshot> ChatMessageStream;
+  QuerySnapshot UserSnapshot;
   ScrollController controller = ScrollController();
 
   Widget chatMessageList() {
@@ -135,6 +136,13 @@ class _ChatScreenState extends State<ChatScreen> {
         ChatMessageStream = val;
       });
     });
+    String username = widget.ChatRoomID.replaceAll("_", "")
+        .replaceAll(Constants.currentUser, "");
+    databaseMethods.getUserInfoByUsername(username).then((val){
+      setState(() {
+        UserSnapshot=val;
+      });
+    });
     scrollToEnd();
     super.initState();
   }
@@ -144,7 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
     Size screenSize = MediaQuery.of(context).size;
     String username = widget.ChatRoomID.replaceAll("_", "")
         .replaceAll(Constants.currentUser, "");
-    return Scaffold(
+    return UserSnapshot!=null ? Scaffold(
       appBar: AppBar(
           centerTitle: true,
           elevation: 0,
@@ -163,13 +171,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(username[0].toUpperCase() + username.substring((1)),
+                    Text(UserSnapshot.docs[0].data()["name"][0].toUpperCase() + UserSnapshot.docs[0].data()["name"].substring((1)),
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600)),
-                    // SizedBox(height: 6),
-                    // Text("Online",
-                    //     style:
-                    //         TextStyle(color: Colors.green[200], fontSize: 13)),
+                    SizedBox(height: 6),
+                    Text('@${username}',
+                        style:
+                            TextStyle(color: Colors.white, fontSize: 13)),
                   ],
                 ),
               ),
@@ -247,6 +255,9 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
+    ):Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }

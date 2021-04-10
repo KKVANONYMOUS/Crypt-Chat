@@ -46,7 +46,7 @@ class _ChatRoomsState extends State<ChatRooms> {
         databaseMethods.getUserInfoByUsername(_searchText).then((val) {
           if (val != null && val.size > 0) {
             String ChatRoomID = HelperFunctions.getChatRoomId(
-                Constants.currentUser, _searchText);
+                _searchText, Constants.currentUser);
             databaseMethods.getCurrUserChatRooms(ChatRoomID).then((val) => {
                   setState(() {
                     ChatRoomsStream = val;
@@ -70,7 +70,7 @@ class _ChatRoomsState extends State<ChatRooms> {
           controller: SearchEditingController,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search, color: Colors.white60),
-              hintText: 'Search...',
+              hintText: 'Search username...',
               hintStyle: TextStyle(color: Colors.white54),
               border: InputBorder.none),
           cursorColor: Colors.white54,
@@ -154,9 +154,7 @@ class _ChatRoomsState extends State<ChatRooms> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              username[0].toUpperCase() +
-                                  username.substring((1)),
+                          Text('@${username}',
                               style: TextStyle(fontSize: 16)),
                           SizedBox(height: 6),
                           Text(
