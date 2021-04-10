@@ -107,9 +107,11 @@ class _ChatRoomsState extends State<ChatRooms> {
                               .data()["LastChat"]["Message"]));
                       lastMessageTime =
                           snapshot.data.docs[index].data()["LastChat"]["Time"];
+                      return ChatRoomsItem(ChatRoomID, lastMessage,
+                          DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
                     }
-                    return ChatRoomsItem(ChatRoomID, lastMessage,
-                        DateTime.fromMillisecondsSinceEpoch(lastMessageTime));
+                    return Container();
+
                   })
               :Container();
         });
