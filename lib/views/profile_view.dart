@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypt_chat/utils/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -17,6 +19,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController BioEditingController = new TextEditingController();
   bool isNameValid=true;
   bool isBioValid=true;
+
+  File imageFile;
+  final ImagePicker picker=ImagePicker();
+
 
   @override
   void initState() {
@@ -43,6 +49,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       scaffoldKey.currentState.showSnackBar(snackBar);
       FocusScope.of(context).unfocus();
     }
+  }
+  void pickImage(ImageSource source) async {
+    final temp=await picker.getImage(source: source);
+    setState(() {
+      imageFile=temp as File;
+    });
   }
 
   @override
@@ -84,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage("assets/images/user_avatar.png")),
+                              image: imageFile!=null?Image.file((imageFile)):NetworkImage(searchUserSnapshot.docs[0].data()['picUrl'])),
                       ),
 
                     ),
@@ -102,9 +114,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             color: Theme.of(context).primaryColor,
                           ),
-                          child: Icon(
-                            Icons.camera_alt_rounded,
-                            color: Colors.white,
+                          child: InkWell(
+                            onTap: (){
+                              showModalBottomSheet(context: context, builder: (builder)=>bottomSheet(screenSize));
+                            },
+                            child: Icon(
+                              Icons.camera_alt_rounded,
+                              color: Colors.white,
+                            ),
                           ),
                         )),
                   ],
@@ -155,6 +172,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Center(child: CircularProgressIndicator()),
     );
   }
+
+
+  Widget bottomSheet(Size screenSize) {
+    return Container(
+      height: screenSize.height * 0.14,
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children:[
+          Text(
+            "Choose Profile photo",
+            style: TextStyle(
+              fontSize: 20.0,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children:[
+            FlatButton.icon(
+              icon: Icon(Icons.camera),
+              onPressed: () {
+                pickImage(ImageSource.camera);
+              },
+              label: Text("Camera"),
+            ),
+            FlatButton.icon(
+              icon: Icon(Icons.image),
+              onPressed: () {
+                pickImage(ImageSource.gallery);
+              },
+              label: Text("Gallery"),
+            ),
+          ])
+        ],
+      ),
+    );
+  }
+
 
   Widget ProfileTextField(BuildContext context,
       String labelText, String placeholder, TextEditingController controller) {
