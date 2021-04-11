@@ -21,6 +21,13 @@ class DatabaseMethods {
         .update({'name':name,'bio':bio});
   }
 
+  updateUserProfilePic(String username,String url) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(username)
+        .update({'picUrl':url});
+  }
+
   getUserInfoByEmail(String email) async {
     return await FirebaseFirestore.instance
         .collection('users')

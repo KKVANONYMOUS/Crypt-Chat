@@ -4,6 +4,7 @@ import 'package:crypt_chat/utils/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:crypt_chat/constants/app_constants.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -21,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isBioValid=true;
 
   File imageFile;
-  final ImagePicker picker=ImagePicker();
+  final picker=ImagePicker();
 
 
   @override
@@ -45,16 +46,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if(isNameValid && isBioValid){
       databaseMethods.updateUserInfo(Constants.currentUser, NameEditingController.text, BioEditingController.text);
-      SnackBar snackBar=SnackBar(content: Text('Profile updated!'));
+      SnackBar snackBar=SnackBar(duration: Duration(seconds: 2),content: Text('Profile updated!'));
       scaffoldKey.currentState.showSnackBar(snackBar);
       FocusScope.of(context).unfocus();
     }
   }
-  void pickImage(ImageSource source) async {
-    final temp=await picker.getImage(source: source);
+  Future pickImage(ImageSource source) async {
+    final temp=await picker.getImage(source: source,maxHeight: 480, maxWidth: 640,imageQuality: 30);
     setState(() {
-      imageFile=temp as File;
+      imageFile=File(temp.path);
     });
+    SnackBar snackBar=SnackBar(content: Text('Profile Picture updated!'));
+    scaffoldKey.currentState.showSnackBar(snackBar);
+    final url=await uploadImage();
+    databaseMethods.updateUserProfilePic(Constants.currentUser, url);
+  }
+
+  uploadImage() async {
+    final firebaseStorageRef= FirebaseStorage.instance.ref().child(Constants.currentUser+DateTime.now().toString());
+    final task=await firebaseStorageRef.putFile(imageFile);
+    return task.ref.getDownloadURL();
   }
 
   @override
@@ -96,7 +107,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: imageFile!=null?Image.file((imageFile)):NetworkImage(searchUserSnapshot.docs[0].data()['picUrl'])),
+                              image:AssetImage("assets/images/user_avatar.png"),
+                              //image: imageFile!=null?FileImage(imageFile):NetworkImage(searchUserSnapshot.docs[0].data()['picUrl']),
+                          ),
                       ),
 
                     ),
@@ -116,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: InkWell(
                             onTap: (){
-                              showModalBottomSheet(context: context, builder: (builder)=>bottomSheet(screenSize));
+                              //showModalBottomSheet(context: context, builder: (builder)=>bottomSheet(screenSize));
                             },
                             child: Icon(
                               Icons.camera_alt_rounded,
